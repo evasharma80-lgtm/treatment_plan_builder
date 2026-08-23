@@ -1,22 +1,8 @@
+export const dynamic = 'force-dynamic';
+
 import { supabaseServer } from '../../lib/supabase';
 import { revalidatePath } from 'next/cache';
-
-async function createIntake(formData: FormData) {
-  'use server';
-  const supabase = supabaseServer();
-  await supabase.from('intake').insert({
-    patient_reference: formData.get('patient_reference'),
-    icd10_code: formData.get('icd10_code'),
-    injury_date: formData.get('injury_date') || null,
-    body_region: formData.get('body_region'),
-    severity: formData.get('severity'),
-    prior_treatment: formData.get('prior_treatment'),
-    insurance_type: formData.get('insurance_type'),
-    contraindication_flags: formData.get('contraindication_flags'),
-    status: 'Ready for processing',
-  });
-  revalidatePath('/intake');
-}
+import IntakeForm from './IntakeForm';
 
 async function generatePlan(formData: FormData) {
   'use server';
@@ -36,29 +22,7 @@ export default async function IntakePage() {
   return (
     <div>
       <h1>New intake</h1>
-      <form action={createIntake} className="card">
-        <label>Patient reference</label>
-        <input name="patient_reference" required placeholder="e.g. Test-002" />
-        <label>ICD-10 code</label>
-        <input name="icd10_code" required placeholder="e.g. S13.4" />
-        <label>Injury date</label>
-        <input name="injury_date" type="date" />
-        <label>Body region</label>
-        <input name="body_region" placeholder="e.g. Neck" />
-        <label>Severity</label>
-        <select name="severity">
-          <option>Mild</option>
-          <option>Moderate</option>
-          <option>Severe</option>
-        </select>
-        <label>Prior treatment</label>
-        <textarea name="prior_treatment" rows={2}></textarea>
-        <label>Insurance type</label>
-        <input name="insurance_type" placeholder="e.g. Auto / PI claim" />
-        <label>Contraindication flags</label>
-        <textarea name="contraindication_flags" rows={2} placeholder="e.g. prior spinal surgery"></textarea>
-        <button type="submit">Create intake</button>
-      </form>
+      <IntakeForm />
 
       <h2>Existing intakes</h2>
       {(intakes || []).map((i) => (
