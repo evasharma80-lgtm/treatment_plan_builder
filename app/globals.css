@@ -1,0 +1,24 @@
+:root {
+  --navy: #1F3864;
+  --teal: #2E7D8A;
+  --paper: #F7F6F2;
+  --ink: #20242B;
+  --line: #D8D5CC;
+  --amber: #C2872F;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, sans-serif; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px; border-bottom: 1px solid var(--line); }
+.brand { color: var(--navy); font-weight: 600; text-decoration: none; }
+nav a { margin-left: 20px; color: var(--teal); text-decoration: none; }
+main { max-width: 760px; margin: 0 auto; padding: 28px; }
+input, select, textarea { width: 100%; padding: 8px; margin-bottom: 14px; border: 1px solid var(--line); border-radius: 4px; font-family: inherit; }
+label { font-size: 13px; font-weight: 600; color: var(--navy); display: block; margin-bottom: 4px; }
+button { background: var(--teal); color: white; border: none; padding: 10px 18px; border-radius: 4px; cursor: pointer; font-weight: 600; }
+button.secondary { background: transparent; color: var(--teal); border: 1px solid var(--teal); }
+button.danger { background: #B3453A; }
+.card { border: 1px solid var(--line); border-radius: 6px; padding: 18px; margin-bottom: 16px; background: white; }
+.status { font-size: 11px; padding: 3px 8px; border-radius: 3px; font-weight: 600; }
+.status-pending { background: #EFE6D3; color: #7A5A1E; }
+.status-approved { background: #DCEAE8; color: #1E5C56; }
+.status-rejected { background: #F3D8D5; color: #8A2E22; }
