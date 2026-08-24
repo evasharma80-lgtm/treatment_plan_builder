@@ -39,3 +39,15 @@ export default async function IntakePage() {
       )}
       {(intakes || []).map((i) => (
         <div key={i.id} className="card">
+          <strong>{i.patient_reference}</strong> — {i.icd10_code} — {i.status}
+          {i.status === 'Ready for processing' && (
+            <form action={generatePlan} style={{ marginTop: 10 }}>
+              <input type="hidden" name="intakeId" value={i.id} />
+              <button type="submit">Generate plan</button>
+            </form>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
