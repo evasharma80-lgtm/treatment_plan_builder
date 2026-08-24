@@ -17,7 +17,14 @@ async function generatePlan(formData: FormData) {
 
 export default async function IntakePage() {
   const supabase = supabaseServer();
-  const { data: intakes } = await supabase.from('intake').select('*').order('created_at', { ascending: false });
+  const { data: intakes, error: listError } = await supabase
+    .from('intake')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (listError) {
+    console.error('[IntakePage] Failed to load intakes:', listError);
+  }
 
   return (
     <div>
@@ -25,17 +32,10 @@ export default async function IntakePage() {
       <IntakeForm />
 
       <h2>Existing intakes</h2>
+      {listError && (
+        <p style={{ color: '#B3453A', fontWeight: 600 }}>
+          Error loading intakes: {listError.message}
+        </p>
+      )}
       {(intakes || []).map((i) => (
         <div key={i.id} className="card">
-          <strong>{i.patient_reference}</strong> — {i.icd10_code} — {i.status}
-          {i.status === 'Ready for processing' && (
-            <form action={generatePlan} style={{ marginTop: 10 }}>
-              <input type="hidden" name="intakeId" value={i.id} />
-              <button type="submit">Generate plan</button>
-            </form>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-}
