@@ -10,13 +10,14 @@ export default function IntakeForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    alert('Button clicked — form is submitting now.');
+    console.log('[IntakeForm] Create intake clicked — submitting form.');
 
     setStatus('saving');
     setErrorMsg('');
 
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form).entries());
+    console.log('[IntakeForm] Payload:', data);
 
     try {
       const res = await fetch('/api/intake', {
@@ -26,11 +27,12 @@ export default function IntakeForm() {
       });
       const json = await res.json();
 
-      alert('Server responded: ' + JSON.stringify(json) + ' (status ' + res.status + ')');
+      console.log('[IntakeForm] Server responded:', res.status, json);
 
       if (!res.ok) {
         setStatus('error');
         setErrorMsg(json.error || `Request failed with status ${res.status}`);
+        console.error('[IntakeForm] Intake creation failed:', json.error || res.status);
         return;
       }
 
@@ -38,7 +40,7 @@ export default function IntakeForm() {
       form.reset();
       router.refresh();
     } catch (err: any) {
-      alert('Network/fetch error: ' + (err.message || String(err)));
+      console.error('[IntakeForm] Network/fetch error:', err);
       setStatus('error');
       setErrorMsg(err.message || 'Network error — could not reach the server.');
     }
