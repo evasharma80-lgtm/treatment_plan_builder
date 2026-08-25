@@ -1,21 +1,5 @@
 import { supabaseServer } from '../../../lib/supabase';
-import { revalidatePath } from 'next/cache';
-
-async function submitReview(formData: FormData) {
-  'use server';
-  const planId = formData.get('planId');
-  await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ''}/api/review`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      planId,
-      reviewerName: formData.get('reviewerName'),
-      decision: formData.get('decision'),
-      notes: formData.get('notes'),
-    }),
-  });
-  revalidatePath(`/plans/${planId}`);
-}
+import ReviewForm from './ReviewForm';
 
 export default async function PlanDetail({ params }: { params: { id: string } }) {
   const supabase = supabaseServer();
@@ -46,20 +30,7 @@ export default async function PlanDetail({ params }: { params: { id: string } })
       </details>
 
       {plan.status === 'Pending review' && (
-        <form action={submitReview} className="card" style={{ marginTop: 20 }}>
-          <input type="hidden" name="planId" value={plan.id} />
-          <label>Reviewer name</label>
-          <input name="reviewerName" required />
-          <label>Decision</label>
-          <select name="decision">
-            <option>Approved</option>
-            <option>Edited & approved</option>
-            <option>Rejected</option>
-          </select>
-          <label>Notes</label>
-          <textarea name="notes" rows={2}></textarea>
-          <button type="submit">Submit review</button>
-        </form>
+        <ReviewForm planId={plan.id} />
       )}
     </div>
   );
