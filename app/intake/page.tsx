@@ -1,19 +1,8 @@
 export const dynamic = 'force-dynamic';
 
 import { supabaseServer } from '../../lib/supabase';
-import { revalidatePath } from 'next/cache';
 import IntakeForm from './IntakeForm';
-
-async function generatePlan(formData: FormData) {
-  'use server';
-  const intakeId = formData.get('intakeId');
-  await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ''}/api/generate-plan`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ intakeId }),
-  });
-  revalidatePath('/intake');
-}
+import GeneratePlanButton from './GeneratePlanButton';
 
 export default async function IntakePage() {
   const supabase = supabaseServer();
@@ -41,10 +30,7 @@ export default async function IntakePage() {
         <div key={i.id} className="card">
           <strong>{i.patient_reference}</strong> — {i.icd10_code} — {i.status}
           {i.status === 'Ready for processing' && (
-            <form action={generatePlan} style={{ marginTop: 10 }}>
-              <input type="hidden" name="intakeId" value={i.id} />
-              <button type="submit">Generate plan</button>
-            </form>
+            <GeneratePlanButton intakeId={i.id} />
           )}
         </div>
       ))}
