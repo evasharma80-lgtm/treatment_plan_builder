@@ -92,7 +92,11 @@ export default async function PlanDetail({ params }: { params: { id: string } })
       </details>
 
       {plan.status === 'Pending review' && (
-        <ReviewForm planId={plan.id} />
+        <ReviewForm
+          planId={plan.id}
+          currentTotalVisits={plan.total_visits_recommended}
+          currentDurationWeeks={plan.duration_weeks}
+        />
       )}
     </div>
   );
