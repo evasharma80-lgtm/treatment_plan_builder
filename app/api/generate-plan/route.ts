@@ -24,28 +24,30 @@ export async function POST(req: NextRequest) {
   const guardrails = runGuardrails(intake, protocols || []);
   const { system, user } = buildPrompt(intake, protocols || [], guardrails);
 
-  const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
+  const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': process.env.ANTHROPIC_API_KEY!,
-      'anthropic-version': '2023-06-01',
+      Authorization: `Bearer ${process.env.GROQ_API_KEY!}`,
     },
     body: JSON.stringify({
-      model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-5',
+      model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
       max_tokens: 1000,
-      system,
-      messages: [{ role: 'user', content: user }],
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user },
+      ],
     }),
   });
 
-  if (!anthropicRes.ok) {
-    const errText = await anthropicRes.text();
+  if (!groqRes.ok) {
+    const errText = await groqRes.text();
     return NextResponse.json({ error: 'LLM call failed', detail: errText }, { status: 502 });
   }
 
-  const anthropicData = await anthropicRes.json();
-  const rawText = anthropicData.content?.[0]?.text || '{}';
+  const groqData = await groqRes.json();
+  const rawText = groqData.choices?.[0]?.message?.content || '{}';
 
   let parsed;
   try {
