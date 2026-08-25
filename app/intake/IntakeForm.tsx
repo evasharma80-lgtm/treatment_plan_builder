@@ -38,7 +38,7 @@ export default function IntakeForm() {
 
       setStatus('idle');
       form.reset();
-      router.refresh();
+      window.location.reload();
     } catch (err: any) {
       console.error('[IntakeForm] Network/fetch error:', err);
       setStatus('error');
